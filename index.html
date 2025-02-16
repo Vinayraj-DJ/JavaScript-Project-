@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Typing Speed Test App</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          background-color: #f4f4f9;
+        }
+      
+        .container {
+          text-align: center;
+          padding: 20px;
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          width: 400px;
+          box-sizing: border-box;
+        }
+      
+        /* h1 {
+          font-size: 24px;
+          margin-bottom: 20px;
+          color: #333;
+        } */
+      
+        .timer {
+          font-size: 36px;
+          margin: 20px 0;
+          font-weight: bold;
+          color: orange;
+        }
+      
+        #passage {
+          margin: 20px 0;
+          font-size: 18px;
+          line-height: 1.5;
+          color: #555;
+        }
+      
+        #inputText {
+          width: 100%;
+          padding: 10px;
+          font-size: 16px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          margin: 10px 0;
+          resize: none;
+        }
+      
+        .results {
+          margin-top: 20px;
+        }
+      
+        .results p {
+          font-size: 18px;
+          margin: 5px 0;
+          color: #333;
+        }
+        /* for resst button */
+      
+        #resetBtn {
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+          margin-top: 20px;
+        }
+      
+        #resetBtn:hover {
+          background-color: #34a83a;
+        }
+      </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Typing Speed Test</h1>
+      <div class="timer" id="timer">1:00</div>
+      <div id="passage">
+        This is a typing speed test. Try to type this passage as fast as possible.
+      </div>
+      <textarea id="inputText" placeholder="Start typing here..." rows="5"></textarea>
+      <div class="results">
+        <p>Speed: <span id="wpm">0</span> WPM</p>
+        <p>Accuracy: <span id="accuracy">0</span>%</p>
+        <p>Errors: <span id="errors">0</span></p>
+      </div>
+      <button id="resetBtn">Reset Test</button>
+    </div>
+
+    <script>
+      let timer;
+      let timeLeft = 60; // Variable corrected to match the usage later in code
+      let typingStarted = false;
+      let charCount = 0;
+      let correctChars = 0;
+      let errorCount = 0;
+
+      const passageText = document.getElementById("passage").innerText;
+      const inputText = document.getElementById("inputText");
+      const timerDisplay = document.getElementById("timer");
+      const wpmDisplay = document.getElementById("wpm");
+      const accuracyDisplay = document.getElementById("accuracy");
+      const errorDisplay = document.getElementById("errors");
+      const resetBtn = document.getElementById("resetBtn");
+
+      inputText.addEventListener("input", function () {
+        if (!typingStarted) {
+          startTimer();
+          typingStarted = true;
+        }
+        checkTyping();
+      });
+
+      // Timer Function
+      // function declaration
+      function startTimer() {
+         // time initialization with set interval
+        timer = setInterval(function () {
+          // check if count down reaches to zero    
+          if (timeLeft <= 0) {
+              // stop the timer and perform an action
+            clearInterval(timer);
+            calculateResults();
+          } else {
+             // Decrement remaining time
+            timeLeft--;
+              // Calculating minutes and seconds
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            // Display remaining time
+            timerDisplay.innerText = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+          }
+        }, 1000);
+      }
+
+      // Typing Check Function
+      function checkTyping() {
+           // Extracting user input
+        let typedText = inputText.value;
+        //   Character count
+        charCount = typedText.length;
+        //   initialize counters
+        correctChars = 0;
+        errorCount = 0;
+
+        // Loop over typed text and passage text for comparison
+        // Compared to typed text with passage
+        for (let i = 0; i < Math.min(typedText.length, passageText.length); i++) {
+          if (typedText[i] === passageText[i]) {
+            correctChars++;
+          } else {
+            errorCount++;
+          }
+        }
+
+        // Update Results
+        updateResults();
+      }
+
+      // Update Results
+      function updateResults() {
+         // Calculate words per minute(WPM)
+        let wpm = Math.round((correctChars / 5) / (60 - timeLeft) * 60);
+        //   Displaying WPM
+        wpmDisplay.innerText = wpm;
+        //   Calculating accuracy
+        let accuracy = Math.round((correctChars / charCount) * 100);
+        //   Displaying accuracy
+        accuracyDisplay.innerText = accuracy;
+        //   Display error count
+        errorDisplay.innerText = errorCount;
+      }
+
+      // Reset Button Function
+      resetBtn.addEventListener("click", function() {
+    // setting time left back to 60 seconds
+  timeLeft = 60;
+//   Resetting timing status
+  typingStarted = false;
+//   Resetting count variables
+  charCount = 0;
+  correctChars = 0;
+  errorCount = 0;
+//   Clearing the text input areas
+  inputText.value = "";
+  inputText.innerHTML = "";
+//   Resetting the timer display
+  timerDisplay.innerText = "1:00";
+//   Resetting timer text results display
+  wpmDisplay.innerText = "0";
+  accuracyDisplay.innerText = "0";
+  errorDisplay.innerText = "0";
+});
+    </script>
+  </body>
+</html>
